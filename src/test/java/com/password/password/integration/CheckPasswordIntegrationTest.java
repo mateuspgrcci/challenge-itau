@@ -24,13 +24,25 @@ class CheckPasswordIntegrationTest {
 
     @Test
     void shouldReturnOk() throws Exception {
-        var cmd = CheckPassword.builder()
+        var command = CheckPassword.builder()
+                .password("")
+                .build();
+
+        this.mock.perform(MockMvcRequestBuilders.post(PATH)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(command)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnBadRequest() throws Exception {
+        var command = CheckPassword.builder()
                 .password(null)
                 .build();
 
-        var response = this.mock.perform(MockMvcRequestBuilders.post(PATH)
+        this.mock.perform(MockMvcRequestBuilders.post(PATH)
                 .contentType(APPLICATION_JSON)
-                .content(mapper.writeValueAsString(cmd)))
-                .andExpect(status().isOk());
+                .content(mapper.writeValueAsString(command)))
+                .andExpect(status().isBadRequest());
     }
 }
